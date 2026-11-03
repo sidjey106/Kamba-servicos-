@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kamba Serviços</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+
+header {
+    background: #063b35;
+    color: white;
+    padding: 25px 15px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 30px;
+}
+
+header p {
+    margin-top: 8px;
+}
+
+.container {
+    padding: 20px;
+    max-width: 900px;
+    margin: auto;
+}
+
+.search {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+h2 {
+    margin-bottom: 15px;
+    color: #063b35;
+}
+
+.services {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #0001;
+}
+
+.card h3 {
+    margin-bottom: 10px;
+}
+
+.card p {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+button {
+    background: #087c65;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background: #055c4c;
+}
+
+footer {
+    background: #063b35;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>KAMBA SERVIÇOS</h1>
+    <p>Encontre profissionais e serviços em Angola.</p>
+</header>
+
+<div class="container">
+
+    <input
+        type="text"
+        class="search"
+        id="pesquisa"
+        placeholder="Pesquisar serviços..."
+        onkeyup="pesquisar()"
+    >
+
+    <h2>Serviços disponíveis</h2>
+
+    <div class="services" id="servicos">
+
+        <div class="card">
+            <h3>🔧 Canalização</h3>
+            <p>Encontre profissionais de canalização.</p>
+            <button onclick="solicitar('Canalização')">
+                Solicitar serviço
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>⚡ Electricidade</h3>
+            <p>Encontre técnicos de electricidade.</p>
+            <button onclick="solicitar('Electricidade')">
+                Solicitar serviço
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>🧹 Limpeza</h3>
+            <p>Serviços de limpeza doméstica.</p>
+            <button onclick="solicitar('Limpeza')">
+                Solicitar serviço
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>💻 Informática</h3>
+            <p>Assistência e manutenção informática.</p>
+            <button onclick="solicitar('Informática')">
+                Solicitar serviço
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>🚗 Transporte</h3>
+            <p>Encontre serviços de transporte.</p>
+            <button onclick="solicitar('Transporte')">
+                Solicitar serviço
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>🎨 Pintura</h3>
+            <p>Profissionais de pintura e decoração.</p>
+            <button onclick="solicitar('Pintura')">
+                Solicitar serviço
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 Kamba Serviços - Angola</p>
+    <p>Ligamos clientes a profissionais.</p>
+</footer>
+
+<script>
+function pesquisar() {
+    let texto = document.getElementById("pesquisa").value.toLowerCase();
+    let cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+        card.style.display = card.innerText.toLowerCase().includes(texto)
+            ? "block"
+            : "none";
+    });
+}
+
+function solicitar(servico) {
+    alert("Selecionaste o serviço de " + servico +
+    ". Em breve poderás contactar um profissional!");
+}
+</script>
+
+</body>
+</html>
