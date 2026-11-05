@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#064e45">
+<title>Painel administrativo | Kamba Serviços</title>
+<style>
+:root{--green:#064e45;--accent:#087f68;--bg:#f3f6f5;--ink:#1d2927;--muted:#667572;--line:#e2e9e7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px Arial,sans-serif}
+header{background:var(--green);color:#fff;padding:22px max(18px,calc((100% - 1100px)/2));display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+header h1{font-size:21px;margin:0}header p{margin:4px 0 0;color:#d5e8e3}
+header a{color:#fff;text-decoration:none;border:1px solid #ffffff70;padding:9px 12px;border-radius:9px}
+main{max-width:1100px;margin:auto;padding:24px 16px 50px}
+.warning{background:#fff4d7;border:1px solid #f0d58c;padding:13px 15px;border-radius:12px;color:#604b14;margin-bottom:20px}
+h2{margin:0 0 16px;color:var(--green)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:24px}
+.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px}
+.stat span{display:block;color:var(--muted);font-size:13px}.stat strong{display:block;font-size:27px;margin-top:7px;color:var(--green)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
+.tabs button,.action{border:0;border-radius:9px;padding:11px 14px;font-weight:700;cursor:pointer}
+.tabs button{background:#e4eeeb;color:var(--green)}.tabs button.active{background:var(--green);color:#fff}
+.panel{padding:0;overflow:hidden}.panel-head{padding:17px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.panel-head h3{margin:0}.panel-head input{padding:10px;border:1px solid var(--line);border-radius:9px;max-width:260px;width:100%}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:middle}th{font-size:12px;text-transform:uppercase;color:var(--muted);background:#f9fbfa}
+.badge{display:inline-block;padding:5px 9px;border-radius:30px;font-size:12px;font-weight:bold;background:#fff0d4;color:#805300}
+.badge.approved{background:#ddf5e8;color:#14653b}.badge.rejected{background:#fde4e2;color:#a22e26}
+.action{padding:8px 10px;font-size:13px;margin:2px}.approve{background:#dff4e7;color:#17683d}.reject{background:#fde8e6;color:#a12d27}
+.empty{padding:25px;text-align:center;color:var(--muted)}
+footer{color:var(--muted);font-size:13px;margin:18px 2px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.table-wrap{overflow-x:auto}table{min-width:720px}header{padding:18px}}
+</style>
+</head>
+<body>
+<header><div><h1>KAMBA SERVIÇOS · Administração</h1><p>Gestão de profissionais e pedidos</p></div><a href="index.html">← Voltar ao site</a></header>
+<main>
+<div class="warning"><strong>Versão de demonstração:</strong> os dados abaixo são fictícios e ficam apenas neste navegador. Este painel ainda não tem login seguro nem base de dados e não deve ser usado para gerir cadastros reais.</div>
+<section class="stats">
+<div class="stat"><span>Profissionais registados</span><strong id="total">4</strong></div>
+<div class="stat"><span>Aguardam aprovação</span><strong id="pending">2</strong></div>
+<div class="stat"><span>Aprovados</span><strong id="approved">1</strong></div>
+<div class="stat"><span>Rejeitados</span><strong id="rejected">1</strong></div>
+</section>
+<h2>Gestão de profissionais</h2>
+<div class="tabs" role="group" aria-label="Filtrar profissionais">
+<button class="active" data-filter="all">Todos</button><button data-filter="pending">Pendentes</button><button data-filter="approved">Aprovados</button><button data-filter="rejected">Rejeitados</button>
+</div>
+<section class="panel">
+<div class="panel-head"><h3>Pedidos de cadastro</h3><input id="search" type="search" placeholder="Pesquisar nome ou profissão..." aria-label="Pesquisar"></div>
+<div class="table-wrap"><table><thead><tr><th>Profissional</th><th>Especialidade</th><th>Localização</th><th>Estado</th><th>Ações</th></tr></thead><tbody id="rows"></tbody></table></div>
+<div id="empty" class="empty" hidden>Nenhum profissional encontrado.</div>
+</section>
+<footer>Protótipo visual do painel. A aprovação real exigirá autenticação de administrador, servidor e base de dados.</footer>
+</main>
+<script>
+const initial=[
+{id:1,name:"Manuel António",job:"Canalização",place:"Luanda · Viana",status:"pending"},
+{id:2,name:"Ana Paula",job:"Limpeza",place:"Benguela · Lobito",status:"pending"},
+{id:3,name:"Carlos Miguel",job:"Electricidade",place:"Huambo · Huambo",status:"approved"},
+{id:4,name:"João Francisco",job:"Construção",place:"Huíla · Lubango",status:"rejected"}
+];
+let people;
+try{people=JSON.parse(localStorage.getItem("kamba_demo_professionals"))||initial}catch(e){people=initial}
+let filter="all";
+const rows=document.getElementById("rows"),empty=document.getElementById("empty");
+const labels={pending:"Pendente",approved:"Aprovado",rejected:"Rejeitado"};
+function save(){localStorage.setItem("kamba_demo_professionals",JSON.stringify(people));render()}
+function render(){
+ document.getElementById("total").textContent=people.length;
+ for(const s of ["pending","approved","rejected"])document.getElementById(s).textContent=people.filter(p=>p.status===s).length;
+ const q=document.getElementById("search").value.trim().toLocaleLowerCase("pt");
+ const shown=people.filter(p=>(filter==="all"||p.status===filter)&&(`${p.name} ${p.job} ${p.place}`).toLocaleLowerCase("pt").includes(q));
+ rows.innerHTML=shown.map(p=>`<tr><td><strong>${escapeHtml(p.name)}</strong></td><td>${escapeHtml(p.job)}</td><td>${escapeHtml(p.place)}</td><td><span class="badge ${p.status}">${labels[p.status]}</span></td><td>${p.status==="pending"?`<button class="action approve" data-id="${p.id}" data-status="approved">Aprovar</button><button class="action reject" data-id="${p.id}" data-status="rejected">Rejeitar</button>`:"—"}</td></tr>`).join("");
+ empty.hidden=shown.length!==0;
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));render()}));
+document.getElementById("search").addEventListener("input",render);
+rows.addEventListener("click",e=>{const b=e.target.closest("button[data-id]");if(!b)return;const p=people.find(x=>x.id===Number(b.dataset.id));if(p){p.status=b.dataset.status;save()}});
+render();
+</script>
+</body></html>
